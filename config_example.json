@@ -1,0 +1,19 @@
+{
+    "imap_settings":[
+        {
+            "imap_server":"imap.gmail.com",
+            "user":"",
+            "password":"",
+            "default_directory":"INBOX",
+            "policy":"UNSEEN"
+        }
+    ],
+    "llm_service":{
+        "base_url":"https://api.deepseek.com",
+        "api-key":"",
+        "model":"deepseek-v4-flash"
+    },
+    "logs":{
+        "dir":"log"
+    }
+}
