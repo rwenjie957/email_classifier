@@ -1,19 +1,33 @@
 {
     "imap_settings":[
         {
-            "imap_server":"imap.gmail.com",
-            "user":"",
-            "password":"",
+            "userCredentials":{
+                "imap_server":"imap.qq.com",
+                "user":"",
+                "password":""
+            },
             "default_directory":"INBOX",
             "policy":"UNSEEN"
         }
     ],
+    "enabled_categories":[
+        "bill",
+        "advertisment",
+        "reminder",
+        "update",
+        "verification",
+        "others"
+    ],
     "llm_service":{
-        "base_url":"https://api.deepseek.com",
-        "api-key":"",
-        "model":"deepseek-v4-flash"
+        "provider": "deepseek",
+        "base_url": "https://api.deepseek.com",
+        "api_key": "",
+        "model": "deepseek-v4-flash",
+        "thinking": false
     },
     "logs":{
-        "dir":"log"
+        "log_dir":"log",
+        "file_log_level":"INFO",
+        "console_log_level":"DEBUG"
     }
 }

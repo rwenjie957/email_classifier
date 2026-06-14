@@ -1,0 +1,37 @@
+{
+    "advertisment":{
+        "name": "advertisment",
+        "folder": "广告",
+        "result_fields":[]
+    },
+    "verification":{
+        "name": "verification",
+        "folder": "验证码",
+        "result_fields":[
+            "content"
+        ]
+    },
+    "bill":{
+        "name": "bill",
+        "folder": "账单",
+        "result_fields":[
+            "amount",
+            "currency"
+        ]
+    },
+    "update":{
+        "name": "update",
+        "folder": "更新",
+        "result_fields":[]
+    },
+    "reminder":{
+        "name": "reminder",
+        "folder": "提醒",
+        "result_fields":[]
+    },
+    "others":{
+        "name": "others",
+        "folder": "其它",
+        "result_fields":[]
+    }
+}

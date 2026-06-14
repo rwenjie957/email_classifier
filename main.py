@@ -1,14 +1,19 @@
-from utils import *
-from classifier import *
+from utils.classifier import LLM
+from utils.imap_client import IMAP
+from utils.utils import * 
+from utils.email_parser import *
 import json
 import logging
 from pathlib import Path
 
-cfg = load_config()
-api_key = cfg["llm_service"]["api_key"]
-base_url = cfg["llm_service"]["base_url"]
-model = cfg["llm_service"]["model"]
-log_path = Path(cfg["logs"]["dir"]) / 'log.txt'
+
+cfg = load_config('config.json')
+categories = load_config("categories.json")
+system_prompt = load_prompts(cfg["enabled_categories"])
+
+llm = LLM(cfg['llm_service'])
+log_path = Path(cfg["logs"]["log_dir"]) / 'log.txt'
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,28 +33,26 @@ logger.addHandler(console_handler)
 
 
 for box in cfg['imap_settings']:
-    logger.info(f"正在处理邮箱:{box["imap_server"]}")
-    i = IMAP(box["imap_server"], box["user"], box["password"])
+    logger.debug(f"正在处理邮箱:{box["userCredentials"]["imap_server"]}")
+    i = IMAP(box["userCredentials"])
     emails=i.get_email_uids(box["policy"], box["default_directory"])
     for uid in emails:
         logger.info(f"正在处理邮件{uid}")
         content = parseEmail(i.get_email_content(uid))
-        reason, result_str = classifer(api_key, 'prompt.md', content, base_url, model)
-        logger.debug(reason)
-        logger.info(result_str)
         logger.debug(content)
-        result = json.loads(result_str)
-        if result['type']=='reminder':
-            i.move(uid, '提醒')
-        elif result['type']=='verification':
-            i.move(uid, '验证码')
-        elif result['type']=='bill':
-            i.move(uid, '账单')
-            print(result['amount']+ result['currency'])
-        elif result['type']=='update':
-            i.move(uid, '更新')
-        elif result['type']=='advertisement':
-            i.move(uid, '广告')
-        elif result['type']=='others':
-            i.move(uid, '其它')
+
+        reason, result = llm.classify(system_prompt, content)
+        logger.debug(reason)
+        logger.info(result)
+        
+        try:
+            result = json.loads(result)
+        except:
+            logger.warning("json解析错误")
+            continue    
+    
+        c = categories[result['type']]
+        i.move(uid, c['folder'])
+        for f in c['result_fields']:
+            print(result[f])
     i.close()
