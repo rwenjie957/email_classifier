@@ -18,13 +18,15 @@
         "verification",
         "others"
     ],
-    "llm_service":{
+    "llm_service":[
+    {
         "provider": "deepseek",
         "base_url": "https://api.deepseek.com",
         "api_key": "",
         "model": "deepseek-v4-flash",
         "thinking": false
-    },
+    }
+    ],
     "logs":{
         "log_dir":"log",
         "file_log_level":"INFO",

@@ -7,14 +7,16 @@
 ### 1. IMAP 邮箱配置
 编辑 `config_example.json`，填写您的邮箱信息：
 ```json
-"userCredentials": {
+"userCredentials": [{
     "imap_server": "imap.qq.com",      // 邮箱 IMAP 服务器
     "user": "your_email@qq.com",        // 邮箱账号
     "password": "your_password"         // 邮箱密码或授权码
-}
+}]
 ```
 - `default_directory`: 监听的邮箱文件夹（默认 INBOX）
 - `policy`: 邮件过滤策略（UNSEEN = 仅未读邮件）
+可配置多个不同的邮箱
+
 
 ### 2. 分类类别
 自定义要分类的邮件类型：
@@ -32,14 +34,15 @@
 ### 3. LLM 服务配置
 配置分类使用的大模型服务：
 ```json
-"llm_service": {
+"llm_service": [{
     "provider": "deepseek",                    // 服务商
     "base_url": "https://api.deepseek.com",    // API 地址
     "api_key": "your_api_key",                 // API 密钥
     "model": "deepseek-v4-flash",              // 模型名称
     "thinking": false                          // 是否启用思考模式
-}
+}]
 ```
+可配置多个服务厂商，当模型不可用时将按照列表中的顺序自动切换模型
 
 ### 4. 日志配置
 ```json
@@ -59,5 +62,6 @@
 ## 支持的LLM厂商
 目前仅支持
 - DeepSeek
-
+- MiMo
+- Qwen
 未来会支持更多模型

@@ -1,6 +1,5 @@
 import imaplib
 import logging
-from pathlib import Path
 import json
 
 

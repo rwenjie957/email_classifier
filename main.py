@@ -1,7 +1,7 @@
-from utils.classifier import LLM
+from utils.LLM import *
 from utils.imap_client import IMAP
-from utils.utils import * 
-from utils.email_parser import *
+from utils.utils import load_config, load_prompts
+from utils.email_parser import parseEmail, parseHTML
 import json
 import logging
 from pathlib import Path
@@ -11,7 +11,12 @@ cfg = load_config('config.json')
 categories = load_config("categories.json")
 system_prompt = load_prompts(cfg["enabled_categories"])
 
-llm = LLM(cfg['llm_service'])
+model_list = []
+for i in cfg['llm_service']:
+    model = PROVIDER_MAP[i['provider']]
+    model_list.append(model(ModelConfig(**i)))
+router = LLMRouter(model_list)
+
 log_path = Path(cfg["logs"]["log_dir"]) / 'log.txt'
 
 
@@ -33,7 +38,7 @@ logger.addHandler(console_handler)
 
 
 for box in cfg['imap_settings']:
-    logger.debug(f"正在处理邮箱:{box["userCredentials"]["imap_server"]}")
+    logger.debug(f'正在处理邮箱:{box["userCredentials"]["imap_server"]}')
     i = IMAP(box["userCredentials"])
     emails=i.get_email_uids(box["policy"], box["default_directory"])
     for uid in emails:
@@ -41,12 +46,12 @@ for box in cfg['imap_settings']:
         content = parseEmail(i.get_email_content(uid))
         logger.debug(content)
 
-        reason, result = llm.classify(system_prompt, content)
-        logger.debug(reason)
-        logger.info(result)
+        response = router.chat(Message(system_prompt, content))
+        logger.debug(response.reasoning)
+        logger.info(response.content)
         
         try:
-            result = json.loads(result)
+            result = json.loads(response.content)
         except:
             logger.warning("json解析错误")
             continue    
